@@ -8,5 +8,7 @@ namespace FleetManager.Entities
         public int Mileage { get; set; }
         public DateTime? Reserved { get; set; }
         public Location Location { get; set; }
+
+        public int? LocationId => Location?.Id;
     }
 }

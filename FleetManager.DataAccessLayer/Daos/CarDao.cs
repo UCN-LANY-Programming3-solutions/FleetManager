@@ -2,6 +2,8 @@
 using FleetManager.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace FleetManager.DataAccessLayer.Daos
 {
@@ -9,37 +11,43 @@ namespace FleetManager.DataAccessLayer.Daos
     {
         public CarDao(IDataContext dataContext) : base(dataContext) { }
 
-        public override int Delete(Car model)
-        {
-            try
-            {
-                using var connection = DataContext.OpenConnection();
-                return connection.Execute("DELETE FROM Cars WHERE Id = @id", model);
-            }
-            catch (Exception ex)
-            {
-                throw new DaoException(model, ex);
-            }
-        }
-
         public override IEnumerable<Car> ReadAll()
         {
-            using var connection = DataContext.OpenConnection();
-            return connection.Query<Car>("SELECT * FROM Cars");
+            string selectCarSQL = "SELECT * " +
+              "FROM Cars " +
+              "LEFT JOIN Locations ON Locations.Id = Cars.LocationId ";
+
+            using IDbConnection connection = DataContext.OpenConnection();
+            return connection.Query<Car, Location, Car>(selectCarSQL, (c, l) =>
+            {
+                c.Location = l;
+                return c;
+            });
         }
 
         public override Car ReadById(int id)
         {
-            using var connection = DataContext.OpenConnection();
-            return connection.QuerySingle<Car>("SELECT * FROM Cars WHERE Id = @id", new { id });
+            string selectCarSQL = "SELECT * " +
+               "FROM Cars " +
+               "LEFT JOIN Locations ON Locations.Id = Cars.LocationId " +
+               "WHERE Cars.Id = @id";
+
+            using IDbConnection connection = DataContext.OpenConnection();
+            return connection.Query<Car, Location, Car>(selectCarSQL, (c, l) =>
+            {
+                c.Location = l;
+                return c;
+            }, new { id }).Single();
         }
 
         public override int Create(Car model)
         {
             try
             {
-                using var connection = DataContext.OpenConnection();
-                return connection.Execute("INSERT INTO Cars (Brand, Mileage, Reserved) VALUES (@brand, @mileage, @reserved)", model);
+                string insertCarSQL = "INSERT INTO Cars (Brand, Mileage, Reserved, LocationId) VALUES (@brand, @mileage, @reserved, @locationId)";
+
+                using IDbConnection connection = DataContext.OpenConnection();
+                return connection.Execute(insertCarSQL, model);
             }
             catch (Exception ex)
             {
@@ -53,6 +61,19 @@ namespace FleetManager.DataAccessLayer.Daos
             {
                 using var connection = DataContext.OpenConnection();
                 return connection.Execute("Update Cars SET Brand = @brand, Mileage = @mileage, Reserved = @reserved WHERE Id = @id", model);
+            }
+            catch (Exception ex)
+            {
+                throw new DaoException(model, ex);
+            }
+        }
+
+        public override int Delete(Car model)
+        {
+            try
+            {
+                using var connection = DataContext.OpenConnection();
+                return connection.Execute("DELETE FROM Cars WHERE Id = @id", model);
             }
             catch (Exception ex)
             {
