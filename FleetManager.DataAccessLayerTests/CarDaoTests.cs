@@ -55,6 +55,20 @@ namespace FleetManager.DataAccessLayerTests
         }
 
         [TestMethod]
+        public void ReadByNonExistingIdTest()
+        {
+            //  Arrange
+            IDataContext dataContext = new DataContext(_connectionString);
+            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+
+            // Act
+            Car test = dao.ReadById(11);
+
+            // Assert
+            Assert.IsNull(test);
+        }
+
+        [TestMethod]
         public void CreateTest()
         {
             //  Arrange

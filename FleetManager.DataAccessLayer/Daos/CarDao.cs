@@ -37,7 +37,7 @@ namespace FleetManager.DataAccessLayer.Daos
             {
                 c.Location = l;
                 return c;
-            }, new { id }).Single();
+            }, new { id }).SingleOrDefault();
         }
 
         public override int Create(Car model)

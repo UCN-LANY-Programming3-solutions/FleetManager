@@ -54,6 +54,21 @@ namespace FleetManager.DataAccessLayerTests
             Assert.AreEqual("Aalborg", test.Name);
         }
 
+
+        [TestMethod]
+        public void ReadByNonExistingIdTest()
+        {
+            //  Arrange
+            IDataContext dataContext = new DataContext(_connectionString);
+            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+
+            // Act
+            Location testLocation = dao.ReadById(11);
+
+            // Assert
+            Assert.IsNull(testLocation);
+        }
+
         [TestMethod]
         public void CreateTest()
         {

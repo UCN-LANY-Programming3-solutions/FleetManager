@@ -32,7 +32,7 @@ namespace FleetManager.DataAccessLayer.Daos
         public override Location ReadById(int id)
         {
             using IDbConnection conn = DataContext.OpenConnection();
-            return conn.QuerySingle<Location>("SELECT * FROM Locations WHERE Id = @id", new { id });
+            return conn.QuerySingleOrDefault<Location>("SELECT * FROM Locations WHERE Id = @id", new { id });
         }
 
         public override int Create(Location model)
