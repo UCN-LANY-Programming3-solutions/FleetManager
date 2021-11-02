@@ -1,7 +1,6 @@
 ﻿using FleetManager.DataAccessLayer;
-using FleetManager.Entities;
+using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,29 +9,28 @@ namespace FleetManager.DataAccessLayerTests
     [TestClass]
     public class CarDaoTests
     {
-        private readonly string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_test_{Guid.NewGuid()}; Integrated Security=true";
+        private IDataContext _dataContext;
 
         [TestInitialize]
         public void InitializeTest()
         {
-            Database.Version.Upgrade(_connectionString);
+            _dataContext = SqlServerDataContext.Create();            
         }
 
         [TestCleanup]
         public void CleanupTest()
         {
-            Database.Version.Drop(_connectionString);
+            SqlServerDataContext.Destroy(_dataContext);
         }
 
         [TestMethod]
         public void ReadAllTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
 
             // Act
-            IEnumerable<Car> test = dao.ReadAll();
+            IEnumerable<Car> test = dao.Read();
 
             // Assert
             Assert.IsNotNull(test);
@@ -42,40 +40,39 @@ namespace FleetManager.DataAccessLayerTests
         [TestMethod]
         public void ReadByIdTest()
         {
-            //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+            //  Arrangeu
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
 
             // Act
-            Car test = dao.ReadById(1);
+            IEnumerable<Car> test = dao.Read(c => c.Id == 1);
 
             // Assert
             Assert.IsNotNull(test);
-            Assert.AreEqual("Ford", test.Brand);
+            Assert.AreEqual(1, test.Count());
+            Assert.AreEqual("Ford", test.Single().Brand);
         }
 
         [TestMethod]
         public void ReadByNonExistingIdTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
 
             // Act
-            Car test = dao.ReadById(11);
+            IEnumerable<Car> test = dao.Read(c => c.Id == 11);
 
             // Assert
-            Assert.IsNull(test);
+            Assert.IsNotNull(test);
+            Assert.AreEqual(0, test.Count());
         }
 
         [TestMethod]
         public void CreateTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
             Car car = new() { Brand = "Hyundai", Id = 3, Mileage = 32000 };
-            
+
             // Act
             int test = dao.Create(car);
 
@@ -87,8 +84,7 @@ namespace FleetManager.DataAccessLayerTests
         public void UpdateTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
             Car car = new() { Id = 1, Brand = "Ford", Mileage = 45000 };
 
             // Act
@@ -102,8 +98,7 @@ namespace FleetManager.DataAccessLayerTests
         public void DeleteTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Car> dao = DaoFactory.Create<Car>(dataContext);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
             Car car = new() { Id = 2 };
 
             // Act

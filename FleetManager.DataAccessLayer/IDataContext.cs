@@ -9,6 +9,11 @@ namespace FleetManager.DataAccessLayer
 {
     public interface IDataContext
     {
-        IDbConnection OpenConnection();
+
+    }
+
+    public interface IDataContext<TConnection> : IDataContext
+    {
+        TConnection Open();
     }
 }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FleetManager.Entities
+namespace FleetManager.DataAccessLayer.Daos.SqlServer.Entities
 {
-    public class Location : EntityBase
+    abstract class EntityBase
     {
-        public string Name { get; set; }
+        public int? Id { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using FleetManager.DataAccessLayer.Daos;
-using FleetManager.Entities;
+using FleetManager.Model;
 
 namespace FleetManager.DataAccessLayer
 {
@@ -7,11 +7,13 @@ namespace FleetManager.DataAccessLayer
     {
         public static IDao<TModel> Create<TModel>(IDataContext dataContext)
         {
+
+
             return typeof(TModel) switch
             {
-                var dao when dao == typeof(Car) => new CarDao(dataContext) as IDao<TModel>,
-                var dao when dao == typeof(Location) => new LocationDao(dataContext) as IDao<TModel>,
-                _ => null,
+                var dao when dao == typeof(Car) => new Daos.SqlServer.CarDao(dataContext) as IDao<TModel>,
+                var dao when dao == typeof(Location) => new Daos.SqlServer.LocationDao(dataContext) as IDao<TModel>,
+                _ => throw new DaoException(),
             };
         }
     }

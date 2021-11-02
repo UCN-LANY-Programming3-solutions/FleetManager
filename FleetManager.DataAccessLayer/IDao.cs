@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FleetManager.DataAccessLayer
 {
@@ -6,9 +7,7 @@ namespace FleetManager.DataAccessLayer
     {
         int Create(TModel model);
 
-        IEnumerable<TModel> ReadAll();
-
-        TModel ReadById(int id);
+        IEnumerable<TModel> Read(Predicate<TModel> predicate = null);
 
         int Update(TModel model);
 

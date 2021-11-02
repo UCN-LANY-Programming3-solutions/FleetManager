@@ -1,7 +1,6 @@
 ﻿using FleetManager.DataAccessLayer;
-using FleetManager.Entities;
+using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,29 +9,28 @@ namespace FleetManager.DataAccessLayerTests
     [TestClass]
     public class LocationDaoTest
     {
-        private readonly string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_test_{Guid.NewGuid()}; Integrated Security=true";
+        private IDataContext _dataContext;
 
         [TestInitialize]
         public void InitializeTest()
         {
-            Database.Version.Upgrade(_connectionString);
+            _dataContext = SqlServerDataContext.Create();
         }
 
         [TestCleanup]
         public void CleanupTest()
         {
-            Database.Version.Drop(_connectionString);
+            SqlServerDataContext.Destroy(_dataContext);
         }
 
         [TestMethod]
         public void ReadAllTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
 
             // Act
-            IEnumerable<Location> test = dao.ReadAll();
+            IEnumerable<Location> test = dao.Read();
 
             // Assert
             Assert.IsNotNull(test);
@@ -43,15 +41,15 @@ namespace FleetManager.DataAccessLayerTests
         public void ReadByIdTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
 
             // Act
-            Location test = dao.ReadById(1);
+            IEnumerable<Location> test = dao.Read(l => l.Id == 1);
 
             // Assert
             Assert.IsNotNull(test);
-            Assert.AreEqual("Aalborg", test.Name);
+            Assert.AreEqual(1, test.Count());
+            Assert.AreEqual("Aalborg", test.Single().Name);
         }
 
 
@@ -59,22 +57,21 @@ namespace FleetManager.DataAccessLayerTests
         public void ReadByNonExistingIdTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
 
             // Act
-            Location testLocation = dao.ReadById(11);
+            IEnumerable<Location> testLocation = dao.Read(l => l.Id == 11);
 
             // Assert
-            Assert.IsNull(testLocation);
+            Assert.IsNotNull(testLocation);
+            Assert.AreEqual(0, testLocation.Count());
         }
 
         [TestMethod]
         public void CreateTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
             Location location = new() { Name = "Horsens" };
 
             // Act
@@ -88,8 +85,7 @@ namespace FleetManager.DataAccessLayerTests
         public void UpdateTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
             Location location = new() { Id = 1, Name = "Horsens" };
 
             // Act
@@ -103,8 +99,7 @@ namespace FleetManager.DataAccessLayerTests
         public void DeleteTest()
         {
             //  Arrange
-            IDataContext dataContext = new DataContext(_connectionString);
-            IDao<Location> dao = DaoFactory.Create<Location>(dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
             Location location = new() { Id = 2 };
 
             // Act, Assert

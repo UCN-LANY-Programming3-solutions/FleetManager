@@ -1,4 +1,4 @@
-﻿using FleetManager.Entities;
+﻿using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
