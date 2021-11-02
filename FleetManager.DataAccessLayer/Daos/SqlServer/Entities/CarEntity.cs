@@ -1,9 +1,5 @@
 ﻿using FleetManager.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FleetManager.DataAccessLayer.Daos.SqlServer.Entities
 {
@@ -23,6 +19,7 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer.Entities
             LocationId = model.Location?.Id;
         }
 
+        public int? Id { get; set; }
         public string Brand { get; set; }
         public int Mileage { get; set; }
         public DateTime? Reserved { get; set; }
