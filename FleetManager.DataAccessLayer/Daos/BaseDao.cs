@@ -9,7 +9,7 @@ namespace FleetManager.DataAccessLayer.Daos
 
         public BaseDao(IDataContext<TConnection> dataContext)
         {
-            DataContext = dataContext;
+            DataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
         }
     }
 }

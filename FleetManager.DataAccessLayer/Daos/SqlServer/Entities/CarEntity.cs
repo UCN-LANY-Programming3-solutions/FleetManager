@@ -3,7 +3,7 @@ using System;
 
 namespace FleetManager.DataAccessLayer.Daos.SqlServer.Entities
 {
-    class CarEntity : EntityBase
+    class CarEntity 
     {
         public CarEntity()
         {

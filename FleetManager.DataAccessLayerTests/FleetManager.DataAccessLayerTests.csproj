@@ -4,6 +4,8 @@
     <TargetFramework>.NETCoreApp,Version=v5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>FleetManager.DataAccessLayer.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

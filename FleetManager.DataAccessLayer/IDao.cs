@@ -5,12 +5,12 @@ namespace FleetManager.DataAccessLayer
 {
     public interface IDao<TModel>
     {
-        int Create(TModel model);
+        TModel Create(TModel model);
 
-        IEnumerable<TModel> Read(Predicate<TModel> predicate = null);
+        IEnumerable<TModel> Read(Func<TModel, bool> predicate = null);
 
-        int Update(TModel model);
+        bool Update(TModel model);
 
-        int Delete(TModel model);
+        bool Delete(TModel model);
     }
 }

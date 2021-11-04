@@ -10,9 +10,11 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
 {
     internal class CarDao : BaseDao<IDbConnection>, IDao<Car>
     {
-        public CarDao(IDataContext dataContext) : base(dataContext as IDataContext<IDbConnection>) { }
+        public CarDao(IDataContext dataContext) : base(dataContext as IDataContext<IDbConnection>)
+        {
+        }
 
-        public IEnumerable<Car> Read(Predicate<Car> predicate = null)
+        public IEnumerable<Car> Read(Func<Car, bool> predicate = null)
         {
             string selectCarSQL = "SELECT * " +
               "FROM Cars " +
@@ -24,17 +26,18 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
                 c.Location = l;
                 return c;
             });
-            return predicate == null ? cars : cars.Where(c => predicate(c));
+            return predicate == null ? cars : cars.Where(predicate);
         }
 
-        public int Create(Car model)
+        public Car Create(Car model)
         {
             try
             {
-                string insertCarSQL = "INSERT INTO Cars (Brand, Mileage, Reserved, LocationId) VALUES (@brand, @mileage, @reserved, @locationId)";
+                string insertCarSQL = "INSERT INTO Cars (Brand, Mileage, Reserved, LocationId) VALUES (@brand, @mileage, @reserved, @locationId); SELECT SCOPE_IDENTITY();";
 
                 using IDbConnection connection = DataContext.Open();
-                return connection.Execute(insertCarSQL, new CarEntity(model));
+                model.Id = connection.ExecuteScalar<int>(insertCarSQL, new CarEntity(model));
+                return model;
             }
             catch (Exception ex)
             {
@@ -42,12 +45,13 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
             }
         }
 
-        public int Update(Car model)
+        public bool Update(Car model)
         {
             try
             {
                 using var connection = DataContext.Open();
-                return connection.Execute("Update Cars SET Brand = @brand, Mileage = @mileage, Reserved = @reserved, LocationId = @locationId WHERE Id = @id", new CarEntity(model));
+                int rowsAffected = connection.Execute("Update Cars SET Brand = @brand, Mileage = @mileage, Reserved = @reserved, LocationId = @locationId WHERE Id = @id", new CarEntity(model));
+                return rowsAffected == 1;
             }
             catch (Exception ex)
             {
@@ -55,12 +59,13 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
             }
         }
 
-        public int Delete(Car model)
+        public bool Delete(Car model)
         {
             try
             {
                 using var connection = DataContext.Open();
-                return connection.Execute("DELETE FROM Cars WHERE Id = @id", model);
+                int rowsAffected = connection.Execute("DELETE FROM Cars WHERE Id = @id", model);
+                return rowsAffected == 1;
             }
             catch (Exception ex)
             {

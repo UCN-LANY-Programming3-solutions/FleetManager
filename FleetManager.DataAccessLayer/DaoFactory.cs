@@ -1,20 +1,31 @@
-﻿using FleetManager.DataAccessLayer.Daos;
-using FleetManager.Model;
+﻿using FleetManager.DataAccessLayer.Daos.Factories;
 
 namespace FleetManager.DataAccessLayer
 {
-    public static class DaoFactory
+    public interface IDaoFactory
     {
-        public static IDao<TModel> Create<TModel>(IDataContext dataContext)
+        IDao<TModel> Create<TModel>(IDataContext dataContext);
+    }
+
+    public abstract class DaoFactory : IDaoFactory
+    {
+        public static IDaoFactory GetConcreteFactory(ConcreteFactories factory)
         {
-
-
-            return typeof(TModel) switch
+            return factory switch
             {
-                var dao when dao == typeof(Car) => new Daos.SqlServer.CarDao(dataContext) as IDao<TModel>,
-                var dao when dao == typeof(Location) => new Daos.SqlServer.LocationDao(dataContext) as IDao<TModel>,
-                _ => throw new DaoException(),
+                ConcreteFactories.SqlServer => new SqlServerDaoFactory(),
+                ConcreteFactories.Memory => new MemoryDaoFactory(),
+                _ => throw new DaoException($"{factory} Factory not supported"),
             };
+        }
+
+        public abstract IDao<TModel> Create<TModel>(IDataContext dataContext);
+
+        public enum ConcreteFactories
+        {
+            SqlServer,
+            Rest, 
+            Memory
         }
     }
 }

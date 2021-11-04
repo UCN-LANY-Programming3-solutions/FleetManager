@@ -1,36 +1,21 @@
-﻿using FleetManager.DataAccessLayer;
-using FleetManager.Model;
+﻿using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FleetManager.DataAccessLayerTests
+namespace FleetManager.DataAccessLayer.Tests
 {
-    [TestClass]
-    public class LocationDaoTest
+    public abstract class LocationDaoTests
     {
-        private IDataContext _dataContext;
-
-        [TestInitialize]
-        public void InitializeTest()
-        {
-            _dataContext = SqlServerDataContext.Create();
-        }
-
-        [TestCleanup]
-        public void CleanupTest()
-        {
-            SqlServerDataContext.Destroy(_dataContext);
-        }
+        protected IDataContext _dataContext;
+        protected IDao<Location> _dao;
 
         [TestMethod]
-        public void ReadAllTest()
+        public virtual void ShouldGetAllLocationsTest()
         {
-            //  Arrange
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
-
             // Act
-            IEnumerable<Location> test = dao.Read();
+            IEnumerable<Location> test = _dao.Read();
 
             // Assert
             Assert.IsNotNull(test);
@@ -38,13 +23,12 @@ namespace FleetManager.DataAccessLayerTests
         }
 
         [TestMethod]
-        public void ReadByIdTest()
+        public virtual void ShouldGetLocationByIdTest()
         {
             //  Arrange
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
 
             // Act
-            IEnumerable<Location> test = dao.Read(l => l.Id == 1);
+            IEnumerable<Location> test = _dao.Read(l => l.Id == 1);
 
             // Assert
             Assert.IsNotNull(test);
@@ -54,13 +38,12 @@ namespace FleetManager.DataAccessLayerTests
 
 
         [TestMethod]
-        public void ReadByNonExistingIdTest()
+        public virtual void ShouldGetEmptyLocationListByNonExistingIdTest()
         {
             //  Arrange
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
 
             // Act
-            IEnumerable<Location> testLocation = dao.Read(l => l.Id == 11);
+            IEnumerable<Location> testLocation = _dao.Read(l => l.Id == 11);
 
             // Assert
             Assert.IsNotNull(testLocation);
@@ -68,42 +51,89 @@ namespace FleetManager.DataAccessLayerTests
         }
 
         [TestMethod]
-        public void CreateTest()
+        public virtual void ShouldCreateLocationTest()
         {
             //  Arrange
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
             Location location = new() { Name = "Horsens" };
 
             // Act
-            int test = dao.Create(location);
+            Location test = _dao.Create(location);
 
             // Assert
-            Assert.AreEqual(1, test);
+            Assert.IsNotNull(test);
+            Assert.IsTrue(test.Id.HasValue);
         }
 
         [TestMethod]
-        public void UpdateTest()
+        public virtual void ShouldUpdateLocationTest()
         {
             //  Arrange
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
             Location location = new() { Id = 1, Name = "Horsens" };
 
             // Act
-            int test = dao.Update(location);
+            bool test = _dao.Update(location);
 
             // Assert
-            Assert.AreEqual(1, test);
+            Assert.IsTrue(test);
         }
 
         [TestMethod]
-        public void DeleteTest()
+        public virtual void ShouldThrowExceptionWhenDeletingLocationThatHasCarsTest()
         {
             //  Arrange
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
             Location location = new() { Id = 2 };
 
             // Act, Assert
-            Assert.ThrowsException<DaoException>(() => dao.Delete(location));
+            Exception ex = Assert.ThrowsException<DaoException>(() => _dao.Delete(location));
+            Assert.IsTrue(ex.Message.Contains("An error ocurred deleting data from FleetManager.Model.Location"));
+        }
+
+        [TestMethod]
+        public virtual void ShouldGetFalseWhenDeletingNonExistingLocationTest()
+        {
+            //  Arrange
+            Location location = new() { Id = 3 };
+
+            // Act
+            bool test = _dao.Delete(location);
+
+            // Assert
+            Assert.IsFalse(test);
+        }
+    }
+
+    [TestClass]
+    public class SqlServerLocationDaoTests : LocationDaoTests
+    {
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            _dataContext = SqlServerDataContext.Create();
+            _dao = DaoFactory
+                .GetConcreteFactory(DaoFactory.ConcreteFactories.SqlServer)
+                .Create<Location>(_dataContext);
+        }
+
+        [TestCleanup]
+        public void CleanupTest()
+        {
+            SqlServerDataContext.Destroy(_dataContext);
+        }
+    }
+
+    [TestClass]
+    public class MemoryLocationDaoTests : LocationDaoTests
+    {
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            _dataContext = TupleDataContext.Create();
+            _dao = DaoFactory.GetConcreteFactory(DaoFactory.ConcreteFactories.Memory).Create<Location>(_dataContext);
+        }
+
+        public override void ShouldThrowExceptionWhenDeletingLocationThatHasCarsTest()
+        {
+            // Cancelling this test
         }
     }
 }

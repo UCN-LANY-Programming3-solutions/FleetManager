@@ -7,11 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FleetManager.DataAccessLayerTests
+namespace FleetManager.DataAccessLayer.Tests
 {
     class SqlServerDataContext : IDataContext<IDbConnection>
     {
         private readonly string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_test_{Guid.NewGuid()}; Integrated Security=true";
+
+        private SqlServerDataContext()
+        {
+
+        }
 
         internal static SqlServerDataContext Create()
         {

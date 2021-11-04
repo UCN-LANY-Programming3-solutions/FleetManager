@@ -11,12 +11,13 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
     {
         public LocationDao(IDataContext dataContext) : base(dataContext as IDataContext<IDbConnection>) { }
 
-        public int Create(Location model)
+        public Location Create(Location model)
         {
             try
             {
                 using IDbConnection conn = DataContext.Open();
-                return conn.Execute("INSERT INTO Locations VALUES (@name)", model);
+                model.Id = conn.ExecuteScalar<int>("INSERT INTO Locations VALUES (@name); SELECT SCOPE_IDENTITY();", model);
+                return model;
             }
             catch (Exception ex)
             {
@@ -24,20 +25,20 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
             }
         }
 
-        public IEnumerable<Location> Read(Predicate<Location> predicate = null)
+        public IEnumerable<Location> Read(Func<Location, bool> predicate = null)
         {
             using IDbConnection conn = DataContext.Open();
             IEnumerable<Location> locations = conn.Query<Location>("SELECT * FROM Locations");
-            return predicate == null ? locations : locations.Where(l => predicate(l));
+            return predicate == null ? locations : locations.Where(predicate);
 
         }
 
-        public int Update(Location model)
+        public bool Update(Location model)
         {
             try
             {
                 using IDbConnection conn = DataContext.Open();
-                return conn.Execute("UPDATE Locations SET Name = @name WHERE Id = @id", model);
+                return conn.Execute("UPDATE Locations SET Name = @name WHERE Id = @id", model) == 1;
             }
             catch (Exception ex)
             {
@@ -45,12 +46,12 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
             }
         }
 
-        public int Delete(Location model)
+        public bool Delete(Location model)
         {
             try
             {
                 using IDbConnection conn = DataContext.Open();
-                return conn.Execute("DELETE FROM Locations WHERE Id = @id", model);
+                return conn.Execute("DELETE FROM Locations WHERE Id = @id", model) == 1;
             }
             catch (Exception ex)
             {
