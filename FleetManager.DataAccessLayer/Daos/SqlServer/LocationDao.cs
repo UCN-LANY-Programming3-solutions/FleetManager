@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FleetManager.DataAccessLayer.Daos.SqlServer.Entities;
 using FleetManager.Model;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,10 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
         {
             try
             {
+                string insertLocationSql = "INSERT INTO Locations VALUES (@name); SELECT SCOPE_IDENTITY();";
+
                 using IDbConnection conn = DataContext.Open();
-                model.Id = conn.ExecuteScalar<int>("INSERT INTO Locations VALUES (@name); SELECT SCOPE_IDENTITY();", model);
+                model.Id = conn.ExecuteScalar<int>(insertLocationSql, model.Map());
                 return model;
             }
             catch (Exception ex)
@@ -27,18 +30,21 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
 
         public IEnumerable<Location> Read(Func<Location, bool> predicate = null)
         {
-            using IDbConnection conn = DataContext.Open();
-            IEnumerable<Location> locations = conn.Query<Location>("SELECT * FROM Locations");
-            return predicate == null ? locations : locations.Where(predicate);
+            string selectLocationSql = "SELECT * FROM Locations";
 
+            using IDbConnection conn = DataContext.Open();
+            IEnumerable<Location> locations = conn.Query<Location>(selectLocationSql);
+            return predicate == null ? locations : locations.Where(predicate);
         }
 
         public bool Update(Location model)
         {
             try
             {
+                string updateLocationSql = "UPDATE Locations SET Name = @name WHERE Id = @id";
+
                 using IDbConnection conn = DataContext.Open();
-                return conn.Execute("UPDATE Locations SET Name = @name WHERE Id = @id", model) == 1;
+                return conn.Execute(updateLocationSql, model.Map()) == 1;
             }
             catch (Exception ex)
             {
@@ -50,8 +56,10 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer
         {
             try
             {
+                string deleteLocationSql = "DELETE FROM Locations WHERE Id = @id";
+
                 using IDbConnection conn = DataContext.Open();
-                return conn.Execute("DELETE FROM Locations WHERE Id = @id", model) == 1;
+                return conn.Execute(deleteLocationSql, model.Map()) == 1;
             }
             catch (Exception ex)
             {
