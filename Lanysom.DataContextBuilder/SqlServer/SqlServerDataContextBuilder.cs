@@ -53,7 +53,6 @@ namespace Lanysom.DataContextBuilder.SqlServer
         public override DataContextBuilder Initialize<TDataContext>(Func<TDataContext> factory)
         {
             _context = factory();
-            Database.Version.Upgrade(_connectionString);
             return this;
         }
     }
