@@ -1,9 +1,10 @@
 ﻿using FleetManager.DataAccessLayer;
-using FleetManager.Entities;
+using FleetManager.Model;
 using FleetManager.WebAPI.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FleetManager.WebAPI.Controllers
 {
@@ -21,7 +22,7 @@ namespace FleetManager.WebAPI.Controllers
         [HttpGet]
         public IEnumerable<LocationDto> Get()
         {
-            foreach (Location location in _locationsDao.ReadAll())
+            foreach (Location location in _locationsDao.Read())
             {
                 yield return location.Map();
             }
@@ -30,17 +31,18 @@ namespace FleetManager.WebAPI.Controllers
         [HttpGet("{id}")]
         public LocationDto Get(int id)
         {
-            return _locationsDao.ReadById(id).Map();
+            return _locationsDao.Read(l =>l.Id == id).Single().Map();
         }
 
         [HttpPost]
         public void Post(LocationDto locationDto)
         {
-            int id = _locationsDao.Create(locationDto.Map());
-            if (id < 0)
+            Location location =  _locationsDao.Create(locationDto.Map());
+
+            if (location.Id.HasValue)
             {
                 Response.StatusCode = StatusCodes.Status201Created;
-                Response.Headers["Location"] = @$"/api/locations/{id}";
+                Response.Headers["Location"] = @$"/api/locations/{location.Id}";
             }
             else
             {
@@ -59,7 +61,7 @@ namespace FleetManager.WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            Location location = _locationsDao.ReadById(id);
+            Location location = _locationsDao.Read(l => l.Id == id).Single();
             _locationsDao.Delete(location);
         }
     }

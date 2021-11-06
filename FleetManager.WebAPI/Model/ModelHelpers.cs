@@ -1,8 +1,8 @@
-﻿using FleetManager.Entities;
+﻿using FleetManager.Model;
 
 namespace FleetManager.WebAPI.Model
 {
-    public static class DtoEntityHelpers
+    public static class DtoModelHelpers
     {
         public static CarDto Map(this Car car)
         {
@@ -50,16 +50,21 @@ namespace FleetManager.WebAPI.Model
         }
 
         public static int? ExtractId(this BaseDto dto)
-        {            
+        {
             return GetIdFromHref(dto.Href);
         }
 
-        public static string ExtractHref(this BaseEntity entity)
+        public static string ExtractHref(this Car entity)
         {
             return $@"/api/{entity.GetType().Name.ToLower()}s/{entity.Id}";
         }
 
-        public static int? GetIdFromHref(string href)
+        public static string ExtractHref(this Location entity)
+        {
+            return $@"/api/{entity.GetType().Name.ToLower()}s/{entity.Id}";
+        }
+
+        public static int? GetIdFromHref(this string href)
         {
             if (href == null)
             {

@@ -1,9 +1,10 @@
 ﻿using FleetManager.DataAccessLayer;
-using FleetManager.Entities;
+using FleetManager.Model;
 using FleetManager.WebAPI.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,7 +27,7 @@ namespace FleetManager.WebAPI.Controllers
         [HttpGet]
         public IEnumerable<CarDto> Get()
         {
-            foreach (Car car in _carDao.ReadAll())
+            foreach (Car car in _carDao.Read())
             {
                 yield return car.Map();
             }
@@ -36,7 +37,7 @@ namespace FleetManager.WebAPI.Controllers
         [HttpGet("{id}")]
         public CarDto Get(int id)
         {
-            return _carDao.ReadById(id).Map();
+            return _carDao.Read(c => c.Id == id).Single().Map();
         }
 
         // POST api/cars
@@ -44,17 +45,18 @@ namespace FleetManager.WebAPI.Controllers
         public void Post(CarDto dto)
         {
             Car car = dto.Map();
-            int? locationId = DtoEntityHelpers.GetIdFromHref(dto.LocationHref);
+            int? locationId = DtoModelHelpers.GetIdFromHref(dto.LocationHref);
             if (locationId.HasValue)
             {
-                car.Location = _locationDao.ReadById(locationId.Value);
+                car.Location = _locationDao.Read(l => l.Id == locationId.Value).Single();
             }
-            int id = _carDao.Create(car);
+            Car model = _carDao.Create(car);
 
-            if (id < 0)
+
+            if (model.Id.HasValue)
             {
                 Response.StatusCode = StatusCodes.Status201Created;
-                Response.Headers["Location"] = @$"/api/locations/{id}";
+                Response.Headers["Location"] = @$"/api/locations/{model.Id.Value}";
             }
             else
             {
@@ -75,7 +77,7 @@ namespace FleetManager.WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            Car car = _carDao.ReadById(id);
+            Car car = _carDao.Read(c => c.Id == id).Single();
             _carDao.Delete(car);
         }
     }

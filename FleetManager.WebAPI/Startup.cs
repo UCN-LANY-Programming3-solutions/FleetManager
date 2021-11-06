@@ -1,18 +1,11 @@
 using FleetManager.DataAccessLayer;
-using FleetManager.Entities;
+using FleetManager.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FleetManager.WebAPI
 {
@@ -28,10 +21,10 @@ namespace FleetManager.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Database.Version.Upgrade(SQLServerDatabase.ConnectionString);
+            Database.Version.Upgrade(SQLServerDataContext.ConnectionString);
 
-            services.AddScoped(s => DaoFactory.Create<Car>(SQLServerDatabase.Create()));
-            services.AddScoped(s => DaoFactory.Create<Location>(SQLServerDatabase.Create()));
+            services.AddScoped(s => DaoFactory.Create<Car>(new SQLServerDataContext()));
+            services.AddScoped(s => DaoFactory.Create<Location>(new SQLServerDataContext()));
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
