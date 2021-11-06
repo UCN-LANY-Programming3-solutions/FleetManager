@@ -1,4 +1,6 @@
-﻿namespace FleetManager.Desktop.Model
+﻿using FleetManager.Model;
+
+namespace FleetManager.Desktop.Model
 {
     static class Mapper
     {

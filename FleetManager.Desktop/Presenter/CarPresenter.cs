@@ -1,5 +1,7 @@
-﻿using FleetManager.Desktop.Data;
+﻿using FleetManager.DataAccessLayer;
+using FleetManager.Desktop.Data;
 using FleetManager.Desktop.Model;
+using FleetManager.Model;
 using System.Collections.Generic;
 
 namespace FleetManager.Desktop.Presenter

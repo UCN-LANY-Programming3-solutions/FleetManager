@@ -1,7 +1,7 @@
-﻿using FleetManager.Desktop.Data;
-using FleetManager.Desktop.Model;
+﻿using FleetManager.DataAccessLayer;
+using FleetManager.Desktop.Data.Rest;
 using FleetManager.Desktop.Presenter;
-using FleetManager.Desktop.Data.Memory;
+using FleetManager.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
@@ -25,8 +25,8 @@ namespace FleetManager.Desktop
         private void ConfigureServices(ServiceCollection services)
         {
             // adding daos to service collection
-            _ = services.AddSingleton(DaoFactory.Create<Car>(DaoFactory.DaoType.REST));
-            _ = services.AddSingleton(DaoFactory.Create<Location>(DaoFactory.DaoType.REST));
+            _ = services.AddSingleton(DaoFactory.Create<Car>(new RestDataContext()));
+            _ = services.AddSingleton(DaoFactory.Create<Location>(new RestDataContext()));
             // adding presenters to service collection
             _ = services.AddSingleton<CarPresenter>();
         }
