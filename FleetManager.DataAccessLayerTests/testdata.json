@@ -1,0 +1,61 @@
+﻿{
+  "schema": {
+    "name": "Cars",
+    "properties": [
+      {
+        "name": "Id",
+        "type": "Int32"
+      },
+      {
+        "name": "Brand",
+        "type": "String"
+      },
+      {
+        "name": "Mileage",
+        "type": "Int32"
+      },
+      {
+        "name": "Reserved",
+        "type": "Datetime"
+      },
+      {
+        "name": "Location",
+        "type": {
+          "name": "Locations",
+          "properties": [
+            {
+              "name": "Id",
+              "type": "Int32"
+            },
+            {
+              "name": "Name",
+              "type": "String"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": [
+    {
+      "Id": 1,
+      "Brand": "Ford",
+      "Mileage": 12398,
+      "Location": {
+        "Id": 1,
+        "Name": "Aalborg"
+      },
+      "Reserved": null
+    },
+    {
+      "Id": 2,
+      "Brand": "Skoda",
+      "Mileage": 5466,
+      "Location": {
+        "Id": 2,
+        "Name": "Randers"
+      },
+      "Reserved": null
+    }
+  ]
+}
