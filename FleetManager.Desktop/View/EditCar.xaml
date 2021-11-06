@@ -1,0 +1,44 @@
+﻿<Window x:Class="FleetManager.Desktop.View.EditCar"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FleetManager.Desktop"
+        mc:Ignorable="d"
+        Title="Edit Car" Height="200" Width="300" Loaded="Dialog_Loaded">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="23" />
+            <Setter Property="Margin" Value="3, 2, 3, 11" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="3" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="3" />
+        </Style>
+    </Window.Resources>
+    <Grid Grid.Column="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Label Content="Brand" Grid.Row="0" />
+        <TextBox x:Name="brandTextBox" Grid.Row="0" Grid.Column="1" />
+        <Label Content="Mileage" Grid.Row="1" />
+        <TextBox x:Name="mileageTextBox" Grid.Row="1" Grid.Column="1" />
+        <Label Content="Location" Grid.Row="2" />
+        <ComboBox x:Name="locationsComboBox" Grid.Row="2" Grid.Column="1" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom">
+            <Button Content="OK" Click="OK_Click" x:Name="btnOk" />
+            <Button Content="Cancel" Click="Cancel_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

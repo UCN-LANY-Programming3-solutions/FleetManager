@@ -9,12 +9,6 @@ namespace FleetManager.DataAccessLayer
 
     public abstract class DaoFactory : IDaoFactory
     {
-        public static IDao<TModel> Create<TModel>(IDataContext dataContext, ConcreteFactories concreteFactory)
-        {
-            IDaoFactory factory = GetConcreteFactory(concreteFactory);
-            return factory.Create<TModel>(dataContext);
-        }
-
         public static IDaoFactory GetConcreteFactory(ConcreteFactories factory)
         {
             return factory switch
