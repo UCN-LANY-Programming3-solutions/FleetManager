@@ -16,9 +16,7 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         public void ShouldCreateCarDaoTest()
         {
             // Act
-            IDao<Car> dao = DaoFactory
-                .GetConcreteFactory(_concreteFactory)
-                .Create<Car>(_dataContext);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext, _concreteFactory);
 
             // Assert
             Assert.IsNotNull(dao);
@@ -28,9 +26,7 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         public void ShouldCreateLocationDaoTest()
         {
             // Act
-            IDao<Location> dao = DaoFactory
-                .GetConcreteFactory(_concreteFactory)
-                .Create<Location>(_dataContext);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext, _concreteFactory);
 
             // Assert
             Assert.IsNotNull(dao);
@@ -39,9 +35,7 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         [TestMethod]
         public void ShouldThrowArgumentNullExceptionWhenDataContextIsNull()
         {
-            Exception e = Assert.ThrowsException<ArgumentNullException>(() => DaoFactory
-                .GetConcreteFactory(_concreteFactory)
-                .Create<Location>(null));
+            Exception e = Assert.ThrowsException<ArgumentNullException>(() => DaoFactory.Create<Location>(null, _concreteFactory));
 
             Assert.IsTrue(e.Message.Contains("dataContext"));
         }

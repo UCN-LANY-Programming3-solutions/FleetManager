@@ -9,14 +9,16 @@ namespace FleetManager.DataAccessLayer
 
     public abstract class DaoFactory : IDaoFactory
     {
-        public static IDaoFactory GetConcreteFactory(ConcreteFactories factory)
+        public static IDao<TModel> Create<TModel>(IDataContext dataContext, ConcreteFactories factoryType)
         {
-            return factory switch
+            IDaoFactory factory = factoryType switch
             {
                 ConcreteFactories.SqlServer => new SqlServerDaoFactory(),
                 ConcreteFactories.Memory => new MemoryDaoFactory(),
-                _ => throw new DaoException($"{factory} Factory not supported"),
+                _ => throw new DaoException($"{factoryType} Factory not supported"),
             };
+
+            return factory.Create<TModel>(dataContext);
         }
 
         public abstract IDao<TModel> Create<TModel>(IDataContext dataContext);
