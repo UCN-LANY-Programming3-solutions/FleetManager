@@ -1,8 +1,11 @@
 ﻿using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
+using System.Collections.Generic;
+using System.Data;
 
-namespace FleetManager.DataAccessLayer.Tests
+namespace FleetManager.DataAccessLayer.Tests.UnitTests
 {
     public abstract class DaoFactoryTests
     {
@@ -51,7 +54,7 @@ namespace FleetManager.DataAccessLayer.Tests
         public void Setup()
         {
             _concreteFactory = DaoFactory.ConcreteFactories.SqlServer;
-            _dataContext = SqlServerDataContext.Create();
+            _dataContext = Mock.Of<IDataContext<IDbConnection>>();
         }
     }
 
@@ -62,7 +65,7 @@ namespace FleetManager.DataAccessLayer.Tests
         public void Setup()
         {
             _concreteFactory = DaoFactory.ConcreteFactories.Memory;
-            _dataContext = TupleDataContext.Create();
+            _dataContext = Mock.Of<IDataContext<Tuple<IList<Car>, IList<Location>>>>();
         }
     }
 }

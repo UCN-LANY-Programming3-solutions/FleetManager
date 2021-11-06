@@ -1,0 +1,20 @@
+﻿{
+  "type": "Cars",
+  "properties": [ "Id", "Brand", "Mileage", "LocationId", "Reserved" ],
+  "data": [
+    {
+      "Id": 1,
+      "Brand": "Ford",
+      "Mileage": 12398,
+      "LocationId": 1,
+      "Reserved": null
+    },
+    {
+      "Id": 2,
+      "Brand": "Skoda",
+      "Mileage": 5466,
+      "LocationId": 2,
+      "Reserved": null
+    }
+  ]
+}

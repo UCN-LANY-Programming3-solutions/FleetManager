@@ -1,10 +1,12 @@
-﻿using FleetManager.DataAccessLayer;
+﻿using FleetManager.DataAccessLayer.Tests.DataContextBuilders;
 using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace FleetManager.DataAccessLayer.Tests
+namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
 {
     public abstract class CarDaoTests
     {
@@ -12,7 +14,7 @@ namespace FleetManager.DataAccessLayer.Tests
         protected IDao<Car> _dao;
 
         [TestMethod]
-        public virtual void ShouldGetAllCarsTest()
+        public virtual void ShouldGetAllCars()
         {
             // Act
             IEnumerable<Car> test = _dao.Read();
@@ -23,7 +25,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldGetCarWithSpecificIdTest()
+        public virtual void ShouldGetCarWithSpecificId()
         {
             // Act
             IEnumerable<Car> test = _dao.Read(c => c.Id == 1);
@@ -35,7 +37,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ReadByNonExistingIdTest()
+        public virtual void ShouldGetEmptyListByNonExistingId()
         {
             // Act
             IEnumerable<Car> test = _dao.Read(c => c.Id == 11);
@@ -46,7 +48,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void CreateTest()
+        public virtual void ShouldCreateCar()
         {
             //  Arrange
             Car car = new() { Brand = "Hyundai", Id = 3, Mileage = 32000 };
@@ -59,7 +61,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldUpdateCarTest()
+        public virtual void ShouldUpdateCar()
         {
             //  Arrange
             Car car = new() { Id = 1, Brand = "Ford", Mileage = 45000, Location = null };
@@ -78,7 +80,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void DeleteTest()
+        public virtual void ShouldDeleteCar()
         {
             //  Arrange
             Car car = new() { Id = 2 };
@@ -94,17 +96,32 @@ namespace FleetManager.DataAccessLayer.Tests
     [TestClass]
     public class SqlServerCarDaoTests : CarDaoTests
     {
-        [TestInitialize]
-        public void InitializeTest()
+        private readonly string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_SqlServerCarDaoTests_{Guid.NewGuid()}; Integrated Security=true";
+        private static readonly List<Action> _dropDatabaseActions = new();
+
+        [ClassCleanup]
+        public static void WaitForCleanUpThreads()
         {
-            _dataContext = SqlServerDataContext.Create();
-            _dao = DaoFactory.GetConcreteFactory(DaoFactory.ConcreteFactories.SqlServer).Create<Car>(_dataContext);
+            Parallel.Invoke(_dropDatabaseActions.ToArray());
         }
 
         [TestCleanup]
         public void CleanupTest()
         {
-            SqlServerDataContext.Destroy(_dataContext);
+            _dropDatabaseActions.Add(() => Database.Version.Drop(_connectionString));
+        }
+
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            _dataContext = DataContextBuilder.For
+                .SqlServer(_connectionString)
+                .Initialize(() => new SqlServerDataContext(_connectionString))
+                .Feed<Location>("locations.json")
+                .Feed<Car>("cars.json")
+                .Build<IDataContext>();
+
+            _dao = DaoFactory.GetConcreteFactory(DaoFactory.ConcreteFactories.SqlServer).Create<Car>(_dataContext);
         }
     }
 
@@ -114,7 +131,13 @@ namespace FleetManager.DataAccessLayer.Tests
         [TestInitialize]
         public void InitializeTest()
         {
-            _dataContext = TupleDataContext.Create();
+            _dataContext = DataContextBuilder.For
+                .Memory()
+                .Initialize<MemoryDataContext>()
+                //.Feed<Location>("locations.json")
+                .Feed<Car>("cars.json")
+                .Build<IDataContext>();
+
             _dao = DaoFactory.GetConcreteFactory(DaoFactory.ConcreteFactories.Memory).Create<Car>(_dataContext);
         }
     }

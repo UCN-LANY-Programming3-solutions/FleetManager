@@ -1,10 +1,13 @@
-﻿using FleetManager.Model;
+﻿using FleetManager.DataAccessLayer.Tests.DataContextBuilders;
+using FleetManager.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace FleetManager.DataAccessLayer.Tests
+namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
 {
     public abstract class LocationDaoTests
     {
@@ -12,7 +15,7 @@ namespace FleetManager.DataAccessLayer.Tests
         protected IDao<Location> _dao;
 
         [TestMethod]
-        public virtual void ShouldGetAllLocationsTest()
+        public virtual void ShouldGetAllLocations()
         {
             // Act
             IEnumerable<Location> test = _dao.Read();
@@ -23,7 +26,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldGetLocationByIdTest()
+        public virtual void ShouldGetLocationWithSpecificId()
         {
             //  Arrange
 
@@ -38,7 +41,7 @@ namespace FleetManager.DataAccessLayer.Tests
 
 
         [TestMethod]
-        public virtual void ShouldGetEmptyLocationListByNonExistingIdTest()
+        public virtual void ShouldGetEmptyLocationListByNonExistingId()
         {
             //  Arrange
 
@@ -51,7 +54,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldCreateLocationTest()
+        public virtual void ShouldCreateLocation()
         {
             //  Arrange
             Location location = new() { Name = "Horsens" };
@@ -65,7 +68,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldUpdateLocationTest()
+        public virtual void ShouldUpdateLocation()
         {
             //  Arrange
             Location location = new() { Id = 1, Name = "Horsens" };
@@ -78,7 +81,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldThrowExceptionWhenDeletingLocationThatHasCarsTest()
+        public virtual void ShouldThrowExceptionWhenDeletingLocationThatHasCars()
         {
             //  Arrange
             Location location = new() { Id = 2 };
@@ -89,7 +92,7 @@ namespace FleetManager.DataAccessLayer.Tests
         }
 
         [TestMethod]
-        public virtual void ShouldGetFalseWhenDeletingNonExistingLocationTest()
+        public virtual void ShouldGetFalseWhenDeletingNonExistingLocation()
         {
             //  Arrange
             Location location = new() { Id = 3 };
@@ -105,19 +108,34 @@ namespace FleetManager.DataAccessLayer.Tests
     [TestClass]
     public class SqlServerLocationDaoTests : LocationDaoTests
     {
-        [TestInitialize]
-        public void InitializeTest()
+        private readonly string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_SqlServerLocationDaoTests_{Guid.NewGuid()}; Integrated Security=true";
+        private static readonly List<Action> _dropDatabaseActions = new();
+
+        [ClassCleanup]
+        public static void WaitForCleanUpThreads()
         {
-            _dataContext = SqlServerDataContext.Create();
-            _dao = DaoFactory
-                .GetConcreteFactory(DaoFactory.ConcreteFactories.SqlServer)
-                .Create<Location>(_dataContext);
+            Parallel.Invoke(_dropDatabaseActions.ToArray());
         }
 
         [TestCleanup]
         public void CleanupTest()
         {
-            SqlServerDataContext.Destroy(_dataContext);
+            _dropDatabaseActions.Add(() => Database.Version.Drop(_connectionString));
+        }
+
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            _dataContext = DataContextBuilder.For
+                   .SqlServer(_connectionString)
+                   .Initialize(() => new SqlServerDataContext(_connectionString))
+                   .Feed<Location>("locations.json")
+                   .Feed<Car>("cars.json")
+                   .Build<IDataContext>();
+
+            _dao = DaoFactory
+                .GetConcreteFactory(DaoFactory.ConcreteFactories.SqlServer)
+                .Create<Location>(_dataContext);
         }
     }
 
@@ -127,11 +145,18 @@ namespace FleetManager.DataAccessLayer.Tests
         [TestInitialize]
         public void InitializeTest()
         {
-            _dataContext = TupleDataContext.Create();
-            _dao = DaoFactory.GetConcreteFactory(DaoFactory.ConcreteFactories.Memory).Create<Location>(_dataContext);
+            _dataContext = DataContextBuilder.For
+                .Memory()
+                .Initialize<MemoryDataContext>()
+                .Feed<Location>("locations.json")
+                .Build<IDataContext>();
+
+            _dao = DaoFactory
+                .GetConcreteFactory(DaoFactory.ConcreteFactories.Memory)
+                .Create<Location>(_dataContext);
         }
 
-        public override void ShouldThrowExceptionWhenDeletingLocationThatHasCarsTest()
+        public override void ShouldThrowExceptionWhenDeletingLocationThatHasCars()
         {
             // Cancelling this test
         }

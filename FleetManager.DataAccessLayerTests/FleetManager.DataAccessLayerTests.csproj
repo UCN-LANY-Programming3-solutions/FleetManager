@@ -21,4 +21,13 @@
     <ProjectReference Include="..\FleetManager.Database\FleetManager.Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="cars.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="locations.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -34,6 +34,9 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer.Entities
 
         public static Location Map(this LocationEntity locationEntity)
         {
+            if (locationEntity == null)
+                return null;
+
             return new Location
             {
                 Id = locationEntity.Id,
@@ -43,6 +46,9 @@ namespace FleetManager.DataAccessLayer.Daos.SqlServer.Entities
 
         public static LocationEntity Map(this Location location)
         {
+            if (location == null)
+                return null;
+
             return new LocationEntity
             {
                 Id = location.Id,

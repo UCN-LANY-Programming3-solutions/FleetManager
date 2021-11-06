@@ -15,7 +15,7 @@ namespace FleetManager.DataAccessLayer.Daos.Memory
 
         public Location Create(Location model)
         {
-            model.Id = DataContext.Open().Item2.Max(l => l.Id) + 1;
+            model.Id = (DataContext.Open().Item2.Max(l => l.Id) + 1) ?? 1;
             DataContext.Open().Item2.Add(model);
 
             return model;

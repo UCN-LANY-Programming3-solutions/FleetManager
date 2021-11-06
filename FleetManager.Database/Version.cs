@@ -1,6 +1,6 @@
 ﻿using DbUp;
-using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace FleetManager.Database
 {
@@ -21,6 +21,11 @@ namespace FleetManager.Database
 
             return result.Successful;
         }
+
+        //public static async Task Drop(string connectionString)
+        //{
+        //    await Task.Run(() => DropDatabase.For.SqlDatabase(connectionString));
+        //}
 
         public static void Drop(string connectionString)
         {
