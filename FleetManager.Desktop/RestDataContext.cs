@@ -12,6 +12,8 @@ namespace FleetManager.Desktop.Data.Rest
     {
         public static string _baseAddress = "https://localhost:44305/api";
 
+        public SupportedContextTypes SupportedContext => SupportedContextTypes.Rest;
+
         public IRestClient Open()
         {
             return new RestClient(_baseAddress);

@@ -5,7 +5,7 @@ namespace FleetManager.DataAccessLayer.Daos.Factories
 {
     class SqlServerDaoFactory : DaoFactory
     {
-        public override IDao<TModel> Create<TModel>(IDataContext dataContext)
+        public override IDao<TModel> CreateDao<TModel>(IDataContext dataContext)
         {
             return typeof(TModel) switch
             {

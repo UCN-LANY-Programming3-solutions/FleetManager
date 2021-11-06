@@ -21,6 +21,8 @@ namespace FleetManager.DataAccessLayer.Tests
 
         public List<Car> Cars => _cars;
 
+        public SupportedContextTypes SupportedContext => SupportedContextTypes.Memory;
+
         public Tuple<IList<Car>, IList<Location>> Open()
         {
             return _data;

@@ -1,33 +1,39 @@
 ﻿using FleetManager.DataAccessLayer.Daos.Factories;
+using System;
 
 namespace FleetManager.DataAccessLayer
 {
     public interface IDaoFactory
     {
-        IDao<TModel> Create<TModel>(IDataContext dataContext);
+        IDao<TModel> CreateDao<TModel>(IDataContext dataContext);
     }
 
     public abstract class DaoFactory : IDaoFactory
     {
-        public static IDao<TModel> Create<TModel>(IDataContext dataContext, ConcreteFactories factoryType)
+        public static IDao<TModel> Create<TModel>(IDataContext dataContext)
         {
-            IDaoFactory factory = factoryType switch
+            if (dataContext is null)
             {
-                ConcreteFactories.SqlServer => new SqlServerDaoFactory(),
-                ConcreteFactories.Memory => new MemoryDaoFactory(),
-                _ => throw new DaoException($"{factoryType} Factory not supported"),
+                throw new ArgumentNullException(nameof(dataContext));
+            }
+
+            IDaoFactory factory = dataContext.SupportedContext switch
+            {
+                SupportedContextTypes.SqlServer => new SqlServerDaoFactory(),
+                SupportedContextTypes.Memory => new MemoryDaoFactory(),
+                _ => throw new DaoException($"{dataContext.SupportedContext} Factory not supported"),
             };
 
-            return factory.Create<TModel>(dataContext);
+            return factory.CreateDao<TModel>(dataContext);
         }
 
-        public abstract IDao<TModel> Create<TModel>(IDataContext dataContext);
+        public abstract IDao<TModel> CreateDao<TModel>(IDataContext dataContext);
+    }
 
-        public enum ConcreteFactories
-        {
-            SqlServer,
-            Rest, 
-            Memory
-        }
+    public enum SupportedContextTypes
+    {
+        SqlServer,
+        Rest,
+        Memory
     }
 }

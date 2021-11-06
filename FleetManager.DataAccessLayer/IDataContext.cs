@@ -9,7 +9,7 @@ namespace FleetManager.DataAccessLayer
 {
     public interface IDataContext
     {
-
+        SupportedContextTypes SupportedContext { get; }
     }
 
     public interface IDataContext<TConnection> : IDataContext

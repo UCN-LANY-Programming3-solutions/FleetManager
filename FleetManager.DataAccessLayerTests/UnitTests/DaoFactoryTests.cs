@@ -10,13 +10,13 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
     public abstract class DaoFactoryTests
     {
         protected IDataContext _dataContext;
-        protected DaoFactory.ConcreteFactories _concreteFactory;
+        protected SupportedContextTypes _concreteFactory;
 
         [TestMethod()]
         public void ShouldCreateCarDaoTest()
         {
             // Act
-            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext, _concreteFactory);
+            IDao<Car> dao = DaoFactory.Create<Car>(_dataContext);
 
             // Assert
             Assert.IsNotNull(dao);
@@ -26,7 +26,7 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         public void ShouldCreateLocationDaoTest()
         {
             // Act
-            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext, _concreteFactory);
+            IDao<Location> dao = DaoFactory.Create<Location>(_dataContext);
 
             // Assert
             Assert.IsNotNull(dao);
@@ -35,7 +35,7 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         [TestMethod]
         public void ShouldThrowArgumentNullExceptionWhenDataContextIsNull()
         {
-            Exception e = Assert.ThrowsException<ArgumentNullException>(() => DaoFactory.Create<Location>(null, _concreteFactory));
+            Exception e = Assert.ThrowsException<ArgumentNullException>(() => DaoFactory.Create<Location>(null));
 
             Assert.IsTrue(e.Message.Contains("dataContext"));
         }
@@ -47,8 +47,10 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            _concreteFactory = DaoFactory.ConcreteFactories.SqlServer;
-            _dataContext = Mock.Of<IDataContext<IDbConnection>>();
+            Mock<IDataContext<IDbConnection>> mockedDataContext = new();
+            mockedDataContext.Setup(c => c.SupportedContext).Returns(SupportedContextTypes.SqlServer);
+
+            _dataContext = mockedDataContext.Object;
         }
     }
 
@@ -58,8 +60,10 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
         [TestInitialize]
         public void Setup()
         {
-            _concreteFactory = DaoFactory.ConcreteFactories.Memory;
-            _dataContext = Mock.Of<IDataContext<Tuple<IList<Car>, IList<Location>>>>();
+            Mock<IDataContext<Tuple<IList<Car>, IList<Location>>>> mockedDataContext = new();
+            mockedDataContext.Setup(c => c.SupportedContext).Returns(SupportedContextTypes.Memory);
+
+            _dataContext = mockedDataContext.Object;
         }
     }
 }

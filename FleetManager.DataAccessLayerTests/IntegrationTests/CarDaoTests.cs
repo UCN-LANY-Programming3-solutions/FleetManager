@@ -123,7 +123,7 @@ namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
                 .Feed<Car>("cars.json")
                 .Build<IDataContext>();
 
-            _dao = DaoFactory.Create<Car>(_dataContext, DaoFactory.ConcreteFactories.SqlServer);
+            _dao = DaoFactory.Create<Car>(_dataContext);
         }
     }
 
@@ -140,7 +140,7 @@ namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
                 .Feed<Car>("cars.json")
                 .Build<IDataContext>();
 
-            _dao = DaoFactory.Create<Car>(_dataContext, DaoFactory.ConcreteFactories.Memory);
+            _dao = DaoFactory.Create<Car>(_dataContext);
         }
     }
 }

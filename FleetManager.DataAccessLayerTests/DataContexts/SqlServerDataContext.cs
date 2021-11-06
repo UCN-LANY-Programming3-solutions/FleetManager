@@ -21,6 +21,8 @@ namespace FleetManager.DataAccessLayer.Tests
             _connectionString = connectionString;
         }
 
+        public SupportedContextTypes SupportedContext => SupportedContextTypes.SqlServer;
+
         public IDbConnection Open()
         {
             SqlConnection conn = new(_connectionString);

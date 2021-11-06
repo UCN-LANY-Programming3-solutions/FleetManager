@@ -134,7 +134,7 @@ namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
                    .Feed<Car>("cars.json")
                    .Build<IDataContext>();
 
-            _dao = DaoFactory.Create<Location>(_dataContext, DaoFactory.ConcreteFactories.SqlServer);
+            _dao = DaoFactory.Create<Location>(_dataContext);
         }
     }
 
@@ -150,7 +150,7 @@ namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
                 .Feed<Location>("locations.json")
                 .Build<IDataContext>();
 
-            _dao = DaoFactory.Create<Location>(_dataContext, DaoFactory.ConcreteFactories.Memory);
+            _dao = DaoFactory.Create<Location>(_dataContext);
         }
 
         public override void ShouldThrowExceptionWhenDeletingLocationThatHasCars()
