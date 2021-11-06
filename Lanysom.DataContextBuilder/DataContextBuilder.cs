@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 
-namespace FleetManager.DataAccessLayer.Tests.DataContextBuilders
+namespace Lanysom.DataContextBuilder
 {
     public abstract class DataContextBuilder
     {

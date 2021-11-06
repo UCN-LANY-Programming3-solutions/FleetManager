@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FleetManager.DataAccessLayer\FleetManager.DataAccessLayer.csproj" />
     <ProjectReference Include="..\FleetManager.Database\FleetManager.Database.csproj" />
+    <ProjectReference Include="..\Lanysom.DataContextBuilder\Lanysom.DataContextBuilder.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,8 +6,8 @@ namespace FleetManager.DataAccessLayer.Tests
 {
     class MemoryDataContext : IDataContext<Tuple<IList<Car>, IList<Location>>>
     {
-        private List<Location> _locations;
-        private List<Car> _cars;
+        private readonly List<Location> _locations;
+        private readonly List<Car> _cars;
         private readonly Tuple<IList<Car>, IList<Location>> _data;
 
         public MemoryDataContext()

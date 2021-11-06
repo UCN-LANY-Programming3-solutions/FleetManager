@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace FleetManager.DataAccessLayer.Tests.DataContextBuilders
+namespace Lanysom.DataContextBuilder.Memory
 {
     class MemoryDataContextBuilder : DataContextBuilder
     {

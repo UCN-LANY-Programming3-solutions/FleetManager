@@ -1,5 +1,5 @@
-﻿using FleetManager.DataAccessLayer.Tests.DataContextBuilders;
-using FleetManager.Model;
+﻿using FleetManager.Model;
+using Lanysom.DataContextBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;

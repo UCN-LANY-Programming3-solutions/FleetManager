@@ -1,10 +1,8 @@
-﻿using FleetManager.DataAccessLayer.Tests.DataContextBuilders;
-using FleetManager.Model;
+﻿using FleetManager.Model;
+using Lanysom.DataContextBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace FleetManager.DataAccessLayer.Tests.UnitTests
@@ -12,7 +10,7 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
     [TestClass]
     public class SqlServerDataContextBuilderTests
     {
-        private string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_SqlServerDataContextBuilderTests_{Guid.NewGuid()}; Integrated Security=true";
+        private readonly string _connectionString = @$"Data Source=(localdb)\mssqllocaldb; Initial Catalog=FleetManager_SqlServerDataContextBuilderTests_{Guid.NewGuid()}; Integrated Security=true";
         private static readonly List<Action> _dropDatabaseActions = new();
 
         [ClassCleanup]
