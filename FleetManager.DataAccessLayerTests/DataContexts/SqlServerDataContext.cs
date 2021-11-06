@@ -27,20 +27,5 @@ namespace FleetManager.DataAccessLayer.Tests
             conn.Open();
             return conn;
         }           
-
-        //public static SqlServerDataContext Initialize(string connectionString)
-        //{
-        //    return new SqlServerDataContext(connectionString);
-        //}
-
-        //public SqlServerDataContext Feed()
-        //{
-        //    return this;
-        //}
-
-        //public IDataContext<IDbConnection> As<TInterface>() where TInterface : class
-        //{
-        //    return this;
-        //}
     }
 }

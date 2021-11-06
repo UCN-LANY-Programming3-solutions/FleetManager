@@ -19,6 +19,12 @@ namespace FleetManager.DataAccessLayer.Tests.UnitTests
             Parallel.Invoke(_dropDatabaseActions.ToArray());
         }
 
+        [TestInitialize]
+        public void Initialize()
+        {
+            Database.Version.Upgrade(_connectionString);
+        }
+
         [TestCleanup]
         public void Cleanup()
         {

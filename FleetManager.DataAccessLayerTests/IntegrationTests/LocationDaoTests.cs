@@ -125,6 +125,8 @@ namespace FleetManager.DataAccessLayer.Tests.IntegrationTests
         [TestInitialize]
         public void InitializeTest()
         {
+            Database.Version.Upgrade(_connectionString);
+
             _dataContext = DataContextBuilder.For
                    .SqlServer(_connectionString)
                    .Initialize(() => new SqlServerDataContext(_connectionString))
