@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManager.DataAccessLaye
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FleetManager.Model", "FleetManager.Model\FleetManager.Model.csproj", "{EC8C289A-088D-4AC7-B1D6-E43EB16A154B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{50895986-EACE-423E-B207-6B3A99777E9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleetManager.Web", "FleetManager.Web\FleetManager.Web.csproj", "{F6D340A9-89C3-4A9E-95CD-2239A8F99413}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +25,17 @@ Global
 		{EC8C289A-088D-4AC7-B1D6-E43EB16A154B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC8C289A-088D-4AC7-B1D6-E43EB16A154B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC8C289A-088D-4AC7-B1D6-E43EB16A154B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6D340A9-89C3-4A9E-95CD-2239A8F99413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6D340A9-89C3-4A9E-95CD-2239A8F99413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6D340A9-89C3-4A9E-95CD-2239A8F99413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6D340A9-89C3-4A9E-95CD-2239A8F99413}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{41F55AA6-1926-47A0-A6DF-D3EF2576BC22} = {50895986-EACE-423E-B207-6B3A99777E9E}
+		{EC8C289A-088D-4AC7-B1D6-E43EB16A154B} = {50895986-EACE-423E-B207-6B3A99777E9E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76B8E77E-CC6A-4FC2-9F1E-99A818B9B459}
